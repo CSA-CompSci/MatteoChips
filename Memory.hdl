@@ -27,10 +27,10 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    DMux4Way(in=load, sel=address[13..14], a=ram1, b=ram2, c=load1, d=load2);
-	Or(a=ram1, b=ram2, out=ram3);
+    DMux4Way(in=load, sel=address[13..14], a=ram1, b=ram2, c=load1, d=load2); //Set the location
+	Or(a=ram1, b=ram2, out=ram3); //Find which location is wanted
     RAM16K(in=in, load=ram3, address=address[0..13], out=ram4);
     Keyboard(out=out2);
-	Screen(in=in, load=load1, address=address[0..12], out=out1);
-    Mux4Way16(a=ram4, b=ram4, c=out1, d=out2, sel=address[13..14], out=out);
+	Screen(in=in, load=load1, address=address[0..12], out=out1); //Grab RAM, Keyboard, and Screen
+    Mux4Way16(a=ram4, b=ram4, c=out1, d=out2, sel=address[13..14], out=out); //Select the right origin
 }
