@@ -41,25 +41,25 @@ CHIP CPU {
     PARTS:
 	Not(in=instruction[15], out=notinstruct);
     Not(in=notinstruct, out=notnotinstruct);
-    And(a=notnotinstruct, b=instruction[5], out=out1);    // C-inst and dest to A-reg?
+    And(a=notnotinstruct, b=instruction[5], out=out1);    // Set A and C register
     Mux16(a=instruction, b=out2, sel=out1, out=out3);
-    Or(a=notinstruct, b=out1, out=load1);    // load A if A-inst or C-inst&dest to A-reg
+    Or(a=notinstruct, b=out1, out=load1);    // Load the correct register
     ARegister(in=out3, load=load1, out=out4);
-    Mux16(a=out4, b=inM, sel=instruction[12], out=out5);   // select A or M based on a-bit
+    Mux16(a=out4, b=inM, sel=instruction[12], out=out5);   //Decide whether A or M is needed
     And(a=notnotinstruct, b=instruction[4], out=load2);
-    DRegister(in=out2, load=load2, out=out6);    // load the D register from ALU
+    DRegister(in=out2, load=load2, out=out6);    //Pull the D Register
     ALU(x=out6, y=out5, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=out2, zr=out7, ng=out8); // calculate
     Or16(a=false, b=out4, out[0..14]=addressM);
     Or16(a=false, b=out2, out=outM);
     And(a=notnotinstruct, b=instruction[3], out=writeM);
-    And(a=out7, b=instruction[1], out=jump1);    // is zero and jump if zero
-    And(a=out8, b=instruction[2], out=jump2);    // is neg and jump if neg
+    And(a=out7, b=instruction[1], out=jump1);    //Prepare for a Zero Jump
+    And(a=out8, b=instruction[2], out=jump2);    //Prepare for a negative Jump
     Or(a=out7, b=out8, out=not1);
-    Not(in=not1, out=not2);            // is not2 (not zero and not neg)
-    And(a=not2, b=instruction[0], out=jump3); // is pos and jump if pos
+    Not(in=not1, out=not2);            //Prepares for a jump anyway
+    And(a=not2, b=instruction[0], out=jump3); //Jump if positive
     Or(a=jump1, b=jump2, out=jump4);
-    Or(a=jump4, b=jump3, out=jump5);              // load PC if cond met and jump if cond
-    And(a=notnotinstruct, b=jump5, out=load3); // Only jump if C instruction
-    Not(in=load3, out=inc1);                  // only inc if not load
+    Or(a=jump4, b=jump3, out=jump5);              //Get ready to load PC
+    And(a=notnotinstruct, b=jump5, out=load3); //Jump for C instruction
+    Not(in=load3, out=inc1);                  //Prepare increment
     PC(in=out4, inc=inc1, load=load3, reset=reset, out[0..14]=pc);
 }
