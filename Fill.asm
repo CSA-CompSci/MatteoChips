@@ -20,29 +20,25 @@
         M=0     
 (INNER)
         @KBD
-        D=M
-        @WHITE
-        D;JEQ   
+        D=M  
 (BLACK)
         @index
-        D=M
+        D=M+1
         @SCREEN
         A=A+D   
-        M=-1    
-        @END
-        0;JMP   
+        M=-1   
 (WHITE)
         @index
-        D=M
+        A=A+1
+		@index
+		D=A
         @SCREEN
         A=A+D   
-        M=0     
+        M=0
 (END)   
         @index
         MD=M+1  
         @count
         D=D-M
         @LOOP
-        D;JEQ   
-        @INNER
-        0;JMP   
+        D;JMP		
